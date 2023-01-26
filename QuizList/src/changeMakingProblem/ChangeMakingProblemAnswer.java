@@ -5,71 +5,88 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ChangeMakingProblemAnswer {
+	//以下は入力された金額に対してお釣りの最小枚数を求め出力するプログラムです。
+	//指定された2箇所を修正してお釣りの枚数を求められるようにしてください。
+	//年末に出した過去問です。編集する箇所が2か所ありますので内容を理解して完成させてください。
+	//
+	//＝＝＝＝条件＝＝＝＝
+	//入力には同クラスのgetIntメソッドを使用してください。
+	//結果を表示するには同クラスのprintResultメソッドを使用してください。
+	//計算するには同クラスのcalcurateメソッドを使用してください。
+	//お釣りの枚数は配列changesに保存してください。
+	//ただし、インデックスが0の所には1円玉の枚数、1のところには5円玉の枚数、2のところには10円玉の枚数のように保存してください。
+	//
+	//====実行結果====
+	//お釣りの硬貨の枚数をそれぞれ求めます。金額を入力してください
+	//	金額=1234
+	//	お釣り
+	//	1円玉 : 4枚
+	//	5円玉 : 0枚
+	//	10円玉 : 3枚
+	//	50円玉 : 0枚
+	//	100円玉 : 2枚
+	//	500円玉 : 2枚
 
-	private BufferedReader br;
-	private int[] change; //お釣りの枚数を保存する配列
-	private final int[] COINS = { 1, 5, 10, 50, 100, 500, 1000, 5000, 10000 }; //コインの種類
+	private static final int[] COINS = { 1, 5, 10, 50, 100, 500 }; // コインの種類
 
 	public static void main(String[] args) {
 		try {
-			ChangeMakingProblemAnswer q = new ChangeMakingProblemAnswer();
-			q.calculate();
+			System.out.println("お釣りを支払う硬貨の枚数をそれぞれ求めます。金額を入力してください");
+			//ここから
+			int cost = getInt("金額=");
+			int[] changes = calculate(cost);
+			printResult(changes);
+			//ここまで
 		} catch (IOException e) {
 			System.out.println("入力エラーが発生しました\n終了します");
 		}
 	}
 
 	/**
-	 * コンストラクタ
-	 * フィールドの値を初期化
-	 */
-	private ChangeMakingProblemAnswer() {
-		this.br = new BufferedReader(new InputStreamReader(System.in));
-		this.change = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
-	}
-
-	/**
 	 * 金額を入力してお釣りの枚数を求めるメソッド
-	 * @return void
+	 *
+	 * @return int[]
 	 * @throws IOException
 	 */
-	private void calculate() throws IOException {
-		System.out.println("お釣りの硬貨の枚数をそれぞれ求めます。金額を入力してください");
-		//ここから
-		int price = this.getInt("金額=");
-		for(int i = this.COINS.length - 1; i >= 0; i--) {
-			int coin = this.COINS[i];
-			int num = price/coin;
-			this.change[i] = num;
-			price -= coin*num;
+	private static int[] calculate(int cost) throws IOException {
+		int[] changes = new int[COINS.length];//お釣りの枚数を保存するための配列
+
+		// ここから
+		for (int i = COINS.length - 1; i >= 0; i--) {
+			int coin = COINS[i];
+			int num = cost / coin;
+			changes[i] = num;
+			cost -= coin * num;
 		}
-		this.printResult();
-		//ここまで
+		// ここまで
+		return changes;
 	}
 
 	/**
-	 *硬貨の枚数を出力するメソッド
+	 * 硬貨の枚数を出力するメソッド
+	 *
 	 * @return void
 	 */
-	private void printResult() {
+	private static void printResult(int[] changes) {
 		System.out.println("お釣り");
-		for (int i = 0; i < this.change.length; i++) {
-			System.out.println(this.COINS[i] + (i < 6 ? "円玉 : " : "円札 : ") + this.change[i] + "枚");
 
+		for (int i = 0; i < changes.length; i++) {
+			System.out.println(COINS[i] + "円玉 : " + changes[i] + "枚");
 		}
 	}
 
 	/**
 	 * 0以上の整数を取得するメソッド
+	 *
 	 * @param String
 	 * @return int
 	 * @throws IOException
 	 */
-	private int getInt(String prefix) throws IOException {
+	private static int getInt(String prefix) throws IOException {
 		while (true) {
-			try {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
 				System.out.print(prefix);
-				int value = Integer.parseInt(this.br.readLine());
+				int value = Integer.parseInt(br.readLine());
 
 				if (value < 0) {
 					System.out.println("0以上の数字を入力してください");
